@@ -10,10 +10,10 @@ type Command struct {
 
 type Pool struct {
 	queue chan Command
-	wg    sync.WaitGroup
+	wg    *sync.WaitGroup
 }
 
-func birthMinion(q chan Command, wg sync.WaitGroup) {
+func birthMinion(q chan Command, wg *sync.WaitGroup) {
 	for j := range q {
 		j.Instructions()
 	}
@@ -27,12 +27,12 @@ func Hire(nbMinions int) *Pool {
 
 	for i := 0; i < nbMinions; i++ {
 		wg.Add(1)
-		go birthMinion(q, wg)
+		go birthMinion(q, &wg)
 	}
 
 	return &Pool{
 		queue: q,
-		wg:    wg,
+		wg:    &wg,
 	}
 }
 
